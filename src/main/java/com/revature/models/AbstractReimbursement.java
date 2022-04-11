@@ -19,7 +19,7 @@ import java.util.Objects;
  *
  * @author Center of Excellence
  */
-public class AbstractReimbursement {
+public abstract class AbstractReimbursement {
 
     private int id;
     private Status status;

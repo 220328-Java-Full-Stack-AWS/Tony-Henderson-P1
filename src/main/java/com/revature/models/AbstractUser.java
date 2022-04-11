@@ -19,7 +19,7 @@ import java.util.Objects;
  * @author Center of Excellence
  */
 
-public class AbstractUser {
+public abstract class AbstractUser {
 
     private int id;
     private String username;
