@@ -1,4 +1,4 @@
-package com.revature.interfaces;
+package com.revature.repositories;
 
 import com.revature.models.User;
 
@@ -14,5 +14,4 @@ public interface IUserDAO {
     User create(User u);
     Optional<User> updateUserInfo(int id, User u);
     boolean deleteUser(User u);
-
 }
