@@ -1,7 +1,6 @@
 package com.revature.repositories;
 
 import com.revature.models.User;
-import com.revature.interfaces.IUserDAO;
 
 import java.util.List;
 import java.util.Optional;
