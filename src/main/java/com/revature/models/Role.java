@@ -19,17 +19,37 @@ package com.revature.models;
  */
 public enum Role {
 
-    EMPLOYEE {
-        @Override
-        public String toString() {
-            return "Employee";
-        }
-    },
-    FINANCE_MANAGER {
-        @Override
-        public String toString() {
-            return "Finance Manager";
-        }
+    EMPLOYEE("EMPLOYEE"),
+    FINANCE_MANAGER("FINANCE_MANAGER");
+
+    private String name;
+
+    Role(String name) {
+        this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    public String toTitleCase(){
+        StringBuilder sb = new StringBuilder();
+        boolean convertNext = true;
+        for(char c : this.name.toCharArray()){
+            if(c == '_'){
+                convertNext = true;
+                sb.append(' ');
+                continue;
+            }
+            if(convertNext){
+                convertNext = false;
+                sb.append(Character.toTitleCase(c));
+            }
+            else {
+                sb.append(Character.toLowerCase(c));
+            }
+        }
+        return sb.toString();
+    }
 }
