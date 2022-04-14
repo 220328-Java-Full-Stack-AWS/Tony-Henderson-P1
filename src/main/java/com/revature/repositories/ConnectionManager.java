@@ -7,7 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class ConnectionManager {
+public class ConnectionManager{
 
     private static Connection conn;
 
@@ -38,8 +38,18 @@ public class ConnectionManager {
         return conn;
     }
 
+    public static void closeConnection(){
+        try {
+            conn.close();
+            conn = null;
+        } catch (SQLException e) {
+            System.out.println("Couldn't close connection.");
+            e.printStackTrace();
+        }
+    }
+
     private static String getConnString(Properties props){
-        StringBuffer connString = new StringBuffer("jdbc:postgresql://");
+        StringBuilder connString = new StringBuilder("jdbc:postgresql://");
         connString.append(props.getProperty("hostname"));
         connString.append(':');
         connString.append(props.getProperty("port"));
@@ -48,5 +58,4 @@ public class ConnectionManager {
 
         return connString.toString();
     }
-
 }
