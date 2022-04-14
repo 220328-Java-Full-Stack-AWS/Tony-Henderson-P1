@@ -1,30 +1,27 @@
 package com.revature.models;
 
-public enum ReimbursementTypes {
+import com.revature.utils.Utils;
 
-    LODGING{
-        @Override
-        public String toString() {
-            return "Lodging";
-        }
-    },
-    FOOD{
-        @Override
-        public String toString() {
-            return "Food";
-        }
-    },
-    TRAVEL{
-        @Override
-        public String toString() {
-            return "Travel";
-        }
-    },
-    SUPPLIES{
-        @Override
-        public String toString(){
-            return "Supplies";
-        }
+public enum ReimbursementType implements Formatable {
+
+    LODGING("LODGING"),
+    FOOD("FOOD"),
+    TRAVEL("TRAVEL"),
+    SUPPLIES("SUPPLIES");
+
+    private String name;
+
+    ReimbursementType(String name){
+        this.name = name;
     }
 
+    @Override
+    public String toString(){
+        return this.name;
+    }
+
+    @Override
+    public String toTitleCase(){
+        return Utils.stringToTitleCase(this.name);
+    }
 }

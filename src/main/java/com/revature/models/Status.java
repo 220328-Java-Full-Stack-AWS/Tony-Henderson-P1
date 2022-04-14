@@ -1,5 +1,7 @@
 package com.revature.models;
 
+import com.revature.utils.Utils;
+
 /**
  * Reimbursements within the ERS application transition through the following statuses:
  * <ul>
@@ -13,24 +15,25 @@ package com.revature.models;
  *
  * @author Center of Excellence
  */
-public enum Status {
+public enum Status implements Formatable {
 
-    PENDING {
-        @Override
-        public String toString() {
-            return "Pending";
-        }
-    },
-    APPROVED {
-        @Override
-        public String toString() {
-            return "Approved";
-        }
-    },
-    DENIED {
-        @Override
-        public String toString() {
-            return "Denied";
-        }
+    PENDING("PENDING"),
+    APPROVED("APPROVED"),
+    DENIED("DENIED");
+
+    private String name;
+
+    Status(String name){
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @Override
+    public String toTitleCase() {
+        return Utils.stringToTitleCase(this.name);
     }
 }

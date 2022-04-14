@@ -1,5 +1,7 @@
 package com.revature.models;
 
+import com.revature.utils.Utils;
+
 /**
  * Users within the ERS application are categorized within the following roles:
  * <ul>
@@ -17,7 +19,7 @@ package com.revature.models;
  *
  * @author Center of Excellence
  */
-public enum Role {
+public enum Role implements Formatable{
 
     EMPLOYEE("EMPLOYEE"),
     FINANCE_MANAGER("FINANCE_MANAGER");
@@ -34,22 +36,6 @@ public enum Role {
     }
 
     public String toTitleCase(){
-        StringBuilder sb = new StringBuilder();
-        boolean convertNext = true;
-        for(char c : this.name.toCharArray()){
-            if(c == '_'){
-                convertNext = true;
-                sb.append(' ');
-                continue;
-            }
-            if(convertNext){
-                convertNext = false;
-                sb.append(Character.toTitleCase(c));
-            }
-            else {
-                sb.append(Character.toLowerCase(c));
-            }
-        }
-        return sb.toString();
+        return Utils.stringToTitleCase(this.name);
     }
 }
