@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface IReimbursementDAO {
     Optional<Reimbursement> getById(int id);
-    List<Reimbursement> getByStatus(Status status);
+    Optional<List<Reimbursement>> getByStatus(Status status);
     Reimbursement update(Reimbursement unprocessedReimbursement) throws UpdateUnsuccessfulException;
     Reimbursement createRequest(Reimbursement newReimbursement) throws CreationUnsuccessfulException, ItemHasNonZeroIdException;
     boolean deleteRequest(int id) throws DeleteUnsuccessfulException;
