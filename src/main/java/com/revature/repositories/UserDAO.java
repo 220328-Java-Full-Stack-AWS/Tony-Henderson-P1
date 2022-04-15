@@ -152,9 +152,9 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
-    public Optional<User> updateUserInfo(int id, User u) throws UpdateUserUnsuccessfulException {
+    public Optional<User> updateUserInfo(int id, User u) throws UpdateUnsuccessfulException {
         if(u.getId() == 0) {
-            throw new UpdateUserUnsuccessfulException("Failed to update user, the user has id = 0. " +
+            throw new UpdateUnsuccessfulException("Failed to update user, the user has id = 0. " +
                     "Maybe you intend to create a user?");
         }
 
@@ -173,7 +173,7 @@ public class UserDAO implements IUserDAO {
             pstmt.setInt(9, id);
 
             if(pstmt.executeUpdate() == 0) {
-                throw new UpdateUserUnsuccessfulException();
+                throw new UpdateUnsuccessfulException();
             }
 
             return Optional.of(u);
