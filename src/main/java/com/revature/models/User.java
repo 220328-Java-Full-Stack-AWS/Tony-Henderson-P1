@@ -32,12 +32,12 @@ public class User extends AbstractUser {
      * This includes the minimum parameters needed for the {@link com.revature.models.AbstractUser} class.
      * If other fields are needed, please create additional constructors.
      */
-    public User(int id, String username, String password, Role role) {
-        super(id, username, password, role);
+    public User(String username, String password, Role role) {
+        super(username, password, role);
     }
 
-    public User(int id, String username, String password, Role role, String firstName, String lastName, String email, String phoneNumber, String address) {
-        super(id, username, password, role);
+    public User(String username, String password, Role role, String firstName, String lastName, String email, String phoneNumber, String address) {
+        super(username, password, role);
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -102,11 +102,12 @@ public class User extends AbstractUser {
     @Override
     public String toString() {
         return "User{" +
+                "id='" + super.getId() + '\'' +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", address='" + address + '\'' +
-                '}';
+                "}\n";
     }
 }

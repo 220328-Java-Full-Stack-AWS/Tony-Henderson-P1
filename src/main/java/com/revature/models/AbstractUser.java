@@ -30,9 +30,8 @@ public abstract class AbstractUser {
         super();
     }
 
-    public AbstractUser(int id, String username, String password, Role role) {
+    public AbstractUser(String username, String password, Role role) {
         super();
-        this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
@@ -40,6 +39,10 @@ public abstract class AbstractUser {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public String getUsername() {
