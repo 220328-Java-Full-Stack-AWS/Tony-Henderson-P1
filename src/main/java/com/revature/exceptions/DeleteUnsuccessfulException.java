@@ -3,7 +3,7 @@ package com.revature.exceptions;
 public class DeleteUnsuccessfulException extends Exception{
 
     public DeleteUnsuccessfulException() {
-        super("Deleting user was unsuccessful");
+        super("Failed to delete item");
     }
 
     public DeleteUnsuccessfulException(String message) {
