@@ -12,7 +12,7 @@ public interface IUserDAO {
     Optional<User> getById(int id);
     Optional<User> getByEmail(String email);
     List<User> getAllUsers();
-    User create(User u) throws RegistrationUnsuccessfulException, UserHasNonZeroIdException;
+    User create(User u) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException;
     Optional<User> updateUserInfo(int id, User u) throws UpdateUnsuccessfulException;
     boolean deleteUser(User u) throws DeleteUnsuccessfulException, CannotDeleteForeignKeyViolationException;
 }

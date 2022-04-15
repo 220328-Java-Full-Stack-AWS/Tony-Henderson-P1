@@ -117,10 +117,10 @@ public class UserDAO implements IUserDAO {
      *     <li>Should return a User object with an updated ID.</li>
      * </ul>
      */
-    public User create(User userToBeRegistered) throws RegistrationUnsuccessfulException, UserHasNonZeroIdException {
+    public User create(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException {
 
         if(userToBeRegistered.getId() != 0){
-            throw new UserHasNonZeroIdException("User: '" + userToBeRegistered.getUsername() + "' already has an id. If" +
+            throw new ItemHasNonZeroIdException("User: '" + userToBeRegistered.getUsername() + "' already has an id. If" +
                     " this is a mistake set id to 0 and try again.");
         }
         try{
