@@ -1,6 +1,6 @@
 package com.revature.exceptions;
 
-public class RegistrationUnsuccessfulException extends RuntimeException {
+public class RegistrationUnsuccessfulException extends Exception {
 
     public RegistrationUnsuccessfulException() {
         super();
