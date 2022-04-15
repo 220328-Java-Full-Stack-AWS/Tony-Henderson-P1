@@ -14,5 +14,5 @@ public interface IUserDAO {
     List<User> getAllUsers();
     User create(User u) throws RegistrationUnsuccessfulException, UserHasNonZeroIdException;
     Optional<User> updateUserInfo(int id, User u) throws UpdateUnsuccessfulException;
-    boolean deleteUser(User u) throws DeleteUserUnsuccessfulException, CannotDeleteForeignKeyViolationException;
+    boolean deleteUser(User u) throws DeleteUnsuccessfulException, CannotDeleteForeignKeyViolationException;
 }

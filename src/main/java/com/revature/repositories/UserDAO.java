@@ -185,7 +185,7 @@ public class UserDAO implements IUserDAO {
     }
 
     @Override
-    public boolean deleteUser(User u) throws DeleteUserUnsuccessfulException, CannotDeleteForeignKeyViolationException {
+    public boolean deleteUser(User u) throws DeleteUnsuccessfulException, CannotDeleteForeignKeyViolationException {
 
         try{
             String sql = "DELETE FROM users WHERE user_id = ?";
@@ -194,7 +194,7 @@ public class UserDAO implements IUserDAO {
             pstmt.setInt(1, u.getId());
 
             if(pstmt.executeUpdate() == 0){
-                throw new DeleteUserUnsuccessfulException("Nothing was changed in the database");
+                throw new DeleteUnsuccessfulException("Nothing was changed in the database");
             }
             return true;
         } catch (SQLException e) {
@@ -202,7 +202,7 @@ public class UserDAO implements IUserDAO {
             if (e.getSQLState().equals("23503")){
                 throw new CannotDeleteForeignKeyViolationException();
             }
-            throw new DeleteUserUnsuccessfulException("Failed to ");
+            throw new DeleteUnsuccessfulException("Failed to ");
         }
     }
 
