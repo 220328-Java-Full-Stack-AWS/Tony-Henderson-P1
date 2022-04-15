@@ -31,6 +31,12 @@ public abstract class AbstractReimbursement {
         super();
     }
 
+    public AbstractReimbursement(Status status, User author, double amount) {
+        this.status = status;
+        this.author = author;
+        this.amount = amount;
+    }
+
     public AbstractReimbursement(Status status, User author, User resolver, double amount) {
         super();
         this.status = status;
