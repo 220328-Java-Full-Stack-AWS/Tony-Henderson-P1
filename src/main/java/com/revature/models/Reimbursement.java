@@ -19,6 +19,7 @@ import java.util.Objects;
 public class Reimbursement extends AbstractReimbursement {
 
     private String description;
+    private Reimbursement type;
     private Date creationDate;
     private Date resolutionDate;
 //    private Date receiptImage;
@@ -32,17 +33,27 @@ public class Reimbursement extends AbstractReimbursement {
      * This includes the minimum parameters needed for the {@link com.revature.models.AbstractReimbursement} class.
      * If other fields are needed, please create additional constructors.
      */
-    public Reimbursement(Status status, User author, double amount, String description, Date creationDate) {
+    public Reimbursement(Status status, User author, double amount, String description, Date creationDate, Reimbursement type) {
         super(status, author, amount);
         this.description = description;
         this.creationDate = creationDate;
+        this.type = type;
     }
 
-    public Reimbursement(Status status, User author, User resolver, double amount, String description, Date creationDate, Date resolutionDate) {
+    public Reimbursement(Status status, User author, User resolver, double amount, String description, Date creationDate, Date resolutionDate, Reimbursement type) {
         super(status, author, resolver, amount);
+        this.type = type;
         this.description = description;
         this.creationDate = creationDate;
         this.resolutionDate = resolutionDate;
+    }
+
+    public Reimbursement getType() {
+        return type;
+    }
+
+    public void setType(Reimbursement type) {
+        this.type = type;
     }
 
     public String getDescription() {
