@@ -31,9 +31,8 @@ public abstract class AbstractReimbursement {
         super();
     }
 
-    public AbstractReimbursement(int id, Status status, User author, User resolver, double amount) {
+    public AbstractReimbursement(Status status, User author, User resolver, double amount) {
         super();
-        this.id = id;
         this.status = status;
         this.author = author;
         this.resolver = resolver;
