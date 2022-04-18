@@ -19,7 +19,7 @@ import java.util.Objects;
 public class Reimbursement extends AbstractReimbursement {
 
     private String description;
-    private Reimbursement type;
+    private ReimbursementType type;
     private Date creationDate;
     private Date resolutionDate;
 //    private Date receiptImage;
@@ -33,14 +33,14 @@ public class Reimbursement extends AbstractReimbursement {
      * This includes the minimum parameters needed for the {@link com.revature.models.AbstractReimbursement} class.
      * If other fields are needed, please create additional constructors.
      */
-    public Reimbursement(Status status, User author, double amount, String description, Date creationDate, Reimbursement type) {
+    public Reimbursement(Status status, User author, double amount, String description, Date creationDate, ReimbursementType type) {
         super(status, author, amount);
         this.description = description;
         this.creationDate = creationDate;
         this.type = type;
     }
 
-    public Reimbursement(Status status, User author, User resolver, double amount, String description, Date creationDate, Date resolutionDate, Reimbursement type) {
+    public Reimbursement(Status status, User author, User resolver, double amount, String description, Date creationDate, Date resolutionDate, ReimbursementType type) {
         super(status, author, resolver, amount);
         this.type = type;
         this.description = description;
@@ -48,11 +48,11 @@ public class Reimbursement extends AbstractReimbursement {
         this.resolutionDate = resolutionDate;
     }
 
-    public Reimbursement getType() {
+    public ReimbursementType getType() {
         return type;
     }
 
-    public void setType(Reimbursement type) {
+    public void setType(ReimbursementType type) {
         this.type = type;
     }
 
@@ -96,10 +96,11 @@ public class Reimbursement extends AbstractReimbursement {
 
     @Override
     public String toString() {
-        return "Reimbursement{" +
+        return "Reimbursement{" + super.getId() +
                 "description='" + description + '\'' +
+                ", type=" + type +
                 ", creationDate=" + creationDate +
                 ", resolutionDate=" + resolutionDate +
-                '}';
+                "}\n";
     }
 }
