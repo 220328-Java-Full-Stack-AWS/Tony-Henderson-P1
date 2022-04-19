@@ -1,9 +1,9 @@
 package com.revature.repositories;
 
-import com.revature.exceptions.CreationUnsuccessfulException;
-import com.revature.exceptions.DeleteUnsuccessfulException;
-import com.revature.exceptions.ItemHasNonZeroIdException;
-import com.revature.exceptions.UpdateUnsuccessfulException;
+import com.revature.exceptions.crud.CreationUnsuccessfulException;
+import com.revature.exceptions.crud.DeleteUnsuccessfulException;
+import com.revature.exceptions.crud.ItemHasNonZeroIdException;
+import com.revature.exceptions.crud.UpdateUnsuccessfulException;
 import com.revature.models.Reimbursement;
 import com.revature.models.Status;
 

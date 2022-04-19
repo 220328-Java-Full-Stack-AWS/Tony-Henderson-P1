@@ -1,4 +1,4 @@
-package com.revature.exceptions;
+package com.revature.exceptions.crud;
 
 public class ItemHasNonZeroIdException extends Exception{
 

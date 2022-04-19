@@ -1,6 +1,6 @@
-package com.revature.exceptions;
+package com.revature.exceptions.user;
 
-public class UsernameNotUniqueException extends RuntimeException {
+public class UsernameNotUniqueException extends Exception {
 
     public UsernameNotUniqueException() {
         super();
