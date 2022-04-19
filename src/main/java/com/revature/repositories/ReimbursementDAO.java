@@ -1,9 +1,9 @@
 package com.revature.repositories;
 
-import com.revature.exceptions.CreationUnsuccessfulException;
-import com.revature.exceptions.DeleteUnsuccessfulException;
-import com.revature.exceptions.ItemHasNonZeroIdException;
-import com.revature.exceptions.UpdateUnsuccessfulException;
+import com.revature.exceptions.crud.CreationUnsuccessfulException;
+import com.revature.exceptions.crud.DeleteUnsuccessfulException;
+import com.revature.exceptions.crud.ItemHasNonZeroIdException;
+import com.revature.exceptions.crud.UpdateUnsuccessfulException;
 import com.revature.models.*;
 
 import java.sql.PreparedStatement;
@@ -54,6 +54,28 @@ public class ReimbursementDAO implements IReimbursementDAO{
         return Optional.empty();
     }
 
+    public Optional<List<Reimbursement>> getAll(){
+        String sql = "SELECT * FROM reimbursements_users_view";
+        List<Reimbursement> reimbursementList = new LinkedList<>();
+
+        try {
+            PreparedStatement pstmt = ConnectionManager.getConnection().prepareStatement(sql);
+
+            ResultSet resSet = pstmt.executeQuery();
+
+            while(resSet.next()){
+                reimbursementList.add(constructReimbursement(resSet));
+            }
+
+            return Optional.of(reimbursementList);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
+    }
+
     @Override
     public Optional<List<Reimbursement>> getByStatus(Status status) {
 
@@ -71,6 +93,30 @@ public class ReimbursementDAO implements IReimbursementDAO{
                 reimbursementList.add(constructReimbursement(resSet));
             }
             return Optional.of(reimbursementList);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<List<Reimbursement>> getAllFromUser(int id){
+
+        String sql = "SELECT * FROM reimbursements_users_view WHERE author = ?";
+        List<Reimbursement> reimbList = new LinkedList<>();
+
+        try {
+            PreparedStatement pstmt = ConnectionManager.getConnection().prepareStatement(sql);
+
+            pstmt.setInt(1, id);
+            ResultSet resSet = pstmt.executeQuery();
+
+            while(resSet.next()){
+                reimbList.add(constructReimbursement(resSet));
+            }
+
+            return Optional.of(reimbList);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
