@@ -1,8 +1,14 @@
 package com.revature.services;
 
-import java.util.Optional;
-
+import com.revature.exceptions.auth.NotAuthorizedException;
+import com.revature.exceptions.crud.UpdateUnsuccessfulException;
+import com.revature.exceptions.user.NoUserExistsException;
+import com.revature.models.Role;
 import com.revature.models.User;
+import com.revature.repositories.UserDAO;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The UserService should handle the processing and retrieval of Users for the ERS application.
@@ -21,10 +27,100 @@ import com.revature.models.User;
  */
 public class UserService {
 
+	public static UserDAO uDao = UserDAO.getDao();
+
 	/**
-	 *     Should retrieve a User with the corresponding username or an empty optional if there is no match.
-     */
-	public Optional<User> getByUsername(String username) {
-		return Optional.empty();
+	 * Admins can request any user. Users can only get themselves.
+	 * @param requesteeUserId User Id of person taking the action
+	 * @param username Username to query
+	 */
+	public static Optional<User> getByUsername(int requesteeUserId, String username) throws NoUserExistsException, NotAuthorizedException {
+		Optional<User> opUser = uDao.getByUsername(username);
+		if(opUser.isPresent()){
+			User u = opUser.get();
+
+			if(u.getId() != requesteeUserId)
+				AuthService.getAdminUser(requesteeUserId);
+
+			return Optional.of(u);
+
+		}
+		else
+			return Optional.empty();
+	}
+
+	/**
+	 * Admins can request any user. Users can only get themselves.
+	 * @param requesteeUserId User Id of person taking the action
+	 * @param requestingUserId User Id to query
+	 */
+	public static Optional<User> getById(int requesteeUserId, int requestingUserId) throws NoUserExistsException, NotAuthorizedException {
+
+		Optional<User> opUser = uDao.getById(requestingUserId);
+		if(opUser.isPresent()){
+			User u = opUser.get();
+
+			if(u.getId() != requesteeUserId)
+				AuthService.getAdminUser(requesteeUserId);
+
+			return Optional.of(u);
+
+		}
+		else
+			return Optional.empty();
+	}
+
+	/**
+	 * Admins can request any user. Users can only get themselves.
+	 * @param requesteeUserId User Id of person taking the action
+	 * @param email User email to query
+	 */
+	public static Optional<User> getByEmail(int requesteeUserId, String email) throws NoUserExistsException, NotAuthorizedException {
+
+		Optional<User> opUser = uDao.getByEmail(email);
+		if(opUser.isPresent()){
+			User u = opUser.get();
+
+			if(u.getId() != requesteeUserId)
+				AuthService.getAdminUser(requesteeUserId);
+
+			return Optional.of(u);
+
+		}
+		else
+			return Optional.empty();
+	}
+
+	/**
+	 * Only Available to Admins
+	 */
+	public static List<User> getAllUsers(int requesteeUserId) throws NoUserExistsException, NotAuthorizedException {
+
+		AuthService.getAdminUser(requesteeUserId);
+
+		return uDao.getAllUsers();
+	}
+
+
+	/**
+	 * Only Admins can promote users
+	 * @param requesteeUserId User Id of person taking the action
+	 * @param userIdToChange User Id of person to promote
+	 */
+	public static User changeToAdmin(int requesteeUserId, int userIdToChange) throws NoUserExistsException, NotAuthorizedException, UpdateUnsuccessfulException {
+		AuthService.getAdminUser(requesteeUserId);
+
+		Optional<User> opUser = uDao.getById(userIdToChange);
+
+		if(opUser.isPresent()){
+			User u = opUser.get();
+
+			u.setRole(Role.FINANCE_MANAGER);
+			uDao.updateUserInfo(userIdToChange, u);
+
+			return u;
+		}
+		else
+			throw new NoUserExistsException();
 	}
 }
