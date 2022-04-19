@@ -1,6 +1,12 @@
 package com.revature.repositories;
 
-import com.revature.exceptions.*;
+import com.revature.exceptions.crud.CannotDeleteForeignKeyViolationException;
+import com.revature.exceptions.crud.DeleteUnsuccessfulException;
+import com.revature.exceptions.crud.ItemHasNonZeroIdException;
+import com.revature.exceptions.crud.UpdateUnsuccessfulException;
+import com.revature.exceptions.user.EmailNotUniqueException;
+import com.revature.exceptions.user.RegistrationUnsuccessfulException;
+import com.revature.exceptions.user.UsernameNotUniqueException;
 import com.revature.models.Role;
 import com.revature.models.User;
 
@@ -117,7 +123,7 @@ public class UserDAO implements IUserDAO {
      *     <li>Should return a User object with an updated ID.</li>
      * </ul>
      */
-    public User create(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException {
+    public User create(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException, UsernameNotUniqueException, EmailNotUniqueException {
 
         if(userToBeRegistered.getId() != 0){
             throw new ItemHasNonZeroIdException("User: '" + userToBeRegistered.getUsername() + "' already has an id. If" +
@@ -143,8 +149,22 @@ public class UserDAO implements IUserDAO {
             if(pstmt.getGeneratedKeys().next()){
                 userToBeRegistered.setId(pstmt.getGeneratedKeys().getInt(1));
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+
+            // Unique constraint was violated
+            if(e.getSQLState().equals("23505")){
+                Optional<User> opUser = UserDAO.getDao().getByUsername(userToBeRegistered.getUsername());
+
+                if(opUser.isPresent()){
+                    throw new UsernameNotUniqueException();
+                }
+                else {
+                    throw new EmailNotUniqueException();
+                }
+            }
+
+            // Default exception
             throw new RegistrationUnsuccessfulException("Failed to register user " + userToBeRegistered.getUsername());
         }
 
