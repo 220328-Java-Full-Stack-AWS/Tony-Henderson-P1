@@ -1,4 +1,4 @@
-package com.revature.exceptions.auth;
+package com.revature.exceptions.reimbursement.auth;
 
 public class NotAuthorizedException extends Exception{
 
