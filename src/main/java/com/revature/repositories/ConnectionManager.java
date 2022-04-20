@@ -20,10 +20,12 @@ public class ConnectionManager{
             InputStream input = loader.getResourceAsStream("application.properties");
 
             try{
+                Class.forName("org.postgresql.Driver");
                 props.load(input);
 
                 conn = DriverManager.getConnection(getConnString(props), props.getProperty("username"), props.getProperty("pass"));
 
+                System.out.println("Connection to the database is established");
                 return conn;
             } catch (SQLException e) {
                 System.out.println("Couldn't get the connection to the database");
@@ -33,6 +35,8 @@ public class ConnectionManager{
                 System.out.println("Could not find the file at the specified location");
                 e.printStackTrace();
                 System.exit(1);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
         return conn;
