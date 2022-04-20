@@ -1,7 +1,7 @@
 package com.revature.services;
 
-import com.revature.exceptions.auth.LoginFailedException;
-import com.revature.exceptions.auth.NotAuthorizedException;
+import com.revature.exceptions.reimbursement.auth.LoginFailedException;
+import com.revature.exceptions.reimbursement.auth.NotAuthorizedException;
 import com.revature.exceptions.crud.ItemHasNonZeroIdException;
 import com.revature.exceptions.user.EmailNotUniqueException;
 import com.revature.exceptions.user.NoUserExistsException;
@@ -72,15 +72,6 @@ public class AuthService {
     public static User register(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException, UsernameNotUniqueException, EmailNotUniqueException {
         return uDao.create(userToBeRegistered);
     }
-
-//    /**
-//     * This is an example method signature for retrieving the currently logged-in user.
-//     * It leverages the Optional type which is a useful interface to handle the
-//     * possibility of a user being unavailable.
-//     */
-//    public static  Optional<User> exampleRetrieveCurrentUser(int id) {
-//        return uDao.getById(id);
-//    }
     
     public static User getAdminUser(int id) throws NoUserExistsException, NotAuthorizedException {
         Optional<User> opUser = uDao.getById(id);

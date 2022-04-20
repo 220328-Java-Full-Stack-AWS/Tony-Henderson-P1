@@ -1,6 +1,6 @@
 package com.revature.services;
 
-import com.revature.exceptions.auth.NotAuthorizedException;
+import com.revature.exceptions.reimbursement.auth.NotAuthorizedException;
 import com.revature.exceptions.crud.CreationUnsuccessfulException;
 import com.revature.exceptions.crud.DeleteUnsuccessfulException;
 import com.revature.exceptions.crud.ItemHasNonZeroIdException;
