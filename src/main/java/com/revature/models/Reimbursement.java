@@ -1,5 +1,6 @@
 package com.revature.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;
 import java.util.Objects;
 
@@ -16,6 +17,7 @@ import java.util.Objects;
  * </ul>
  *
  */
+@JsonIgnoreProperties
 public class Reimbursement extends AbstractReimbursement {
 
     private String description;
