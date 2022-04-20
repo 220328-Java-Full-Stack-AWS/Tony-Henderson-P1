@@ -1,6 +1,6 @@
 package com.revature.services;
 
-import com.revature.exceptions.auth.NotAuthorizedException;
+import com.revature.exceptions.reimbursement.auth.NotAuthorizedException;
 import com.revature.exceptions.crud.UpdateUnsuccessfulException;
 import com.revature.exceptions.user.NoUserExistsException;
 import com.revature.models.Role;
@@ -27,7 +27,7 @@ import java.util.Optional;
  */
 public class UserService {
 
-	public static UserDAO uDao = UserDAO.getDao();
+	private static UserDAO uDao = UserDAO.getDao();
 
 	/**
 	 * Admins can request any user. Users can only get themselves.
@@ -94,9 +94,14 @@ public class UserService {
 	/**
 	 * Only Available to Admins
 	 */
-	public static List<User> getAllUsers(int requesteeUserId) throws NoUserExistsException, NotAuthorizedException {
+	public static List<User> getAllUsers(int requesteeUserId) throws NotAuthorizedException {
 
-		AuthService.getAdminUser(requesteeUserId);
+		try {
+			AuthService.getAdminUser(requesteeUserId);
+		} catch (NoUserExistsException e) {
+			e.printStackTrace();
+			throw new NotAuthorizedException();
+		}
 
 		return uDao.getAllUsers();
 	}
