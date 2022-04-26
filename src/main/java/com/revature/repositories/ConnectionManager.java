@@ -44,8 +44,10 @@ public class ConnectionManager{
 
     public static void closeConnection(){
         try {
-            conn.close();
-            conn = null;
+            if (conn != null){
+                conn.close();
+                conn = null;
+            }
         } catch (SQLException e) {
             System.out.println("Couldn't close connection.");
             e.printStackTrace();
