@@ -1,8 +1,9 @@
 package com.revature.services;
 
-import com.revature.exceptions.reimbursement.auth.LoginFailedException;
-import com.revature.exceptions.reimbursement.auth.NotAuthorizedException;
+import com.revature.exceptions.auth.LoginFailedException;
+import com.revature.exceptions.auth.NotAuthorizedException;
 import com.revature.exceptions.crud.ItemHasNonZeroIdException;
+import com.revature.exceptions.sql.NotNullConstraintException;
 import com.revature.exceptions.user.EmailNotUniqueException;
 import com.revature.exceptions.user.NoUserExistsException;
 import com.revature.exceptions.user.RegistrationUnsuccessfulException;
@@ -10,6 +11,7 @@ import com.revature.exceptions.user.UsernameNotUniqueException;
 import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.UserDAO;
+import com.revature.utils.BCryptHash;
 
 import java.util.Optional;
 
@@ -27,7 +29,7 @@ import java.util.Optional;
  */
 public class AuthService {
 
-    private static UserDAO uDao = UserDAO.getDao();
+    private static final UserDAO uDao = UserDAO.getDao();
 
     private AuthService(){}
 
@@ -40,20 +42,16 @@ public class AuthService {
      *     <li>Must return user object if the user logs in successfully.</li>
      * </ul>
      */
-    public static User login(String username, String password) throws LoginFailedException, NoUserExistsException {
-
+    public static User login(String username, String password) throws LoginFailedException {
         Optional<User> u = uDao.getByUsername(username);
 
         if(u.isPresent()){
             User user = u.get();
 
-            if(user.getPassword().equals(password))
+            if(BCryptHash.verify(password, user.getPassword()))
                 return user;
-            else
-                throw new LoginFailedException();
         }
-        else
-            throw new NoUserExistsException();
+        throw new LoginFailedException();
     }
 
     /**
@@ -69,7 +67,7 @@ public class AuthService {
      * Note: userToBeRegistered will have an id=0, additional fields may be null.
      * After registration, the id will be a positive integer.
      */
-    public static User register(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException, UsernameNotUniqueException, EmailNotUniqueException {
+    public static User register(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException, UsernameNotUniqueException, EmailNotUniqueException, NotNullConstraintException {
         return uDao.create(userToBeRegistered);
     }
     
@@ -78,14 +76,11 @@ public class AuthService {
 
         if(opUser.isPresent()){
             User u = opUser.get();
-
             if(u.getRole() == Role.EMPLOYEE)
                 throw new NotAuthorizedException();
 
             return u;
-        }
-        else {
+        } else
             throw new NoUserExistsException();
-        }
     }
 }
