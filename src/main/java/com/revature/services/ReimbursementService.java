@@ -1,15 +1,16 @@
 package com.revature.services;
 
-import com.revature.exceptions.reimbursement.auth.NotAuthorizedException;
+import com.revature.exceptions.auth.NotAuthorizedException;
 import com.revature.exceptions.crud.CreationUnsuccessfulException;
 import com.revature.exceptions.crud.DeleteUnsuccessfulException;
 import com.revature.exceptions.crud.ItemHasNonZeroIdException;
 import com.revature.exceptions.crud.UpdateUnsuccessfulException;
 import com.revature.exceptions.reimbursement.NoReimbursementExistsException;
 import com.revature.exceptions.reimbursement.ReimbursementNoLongerPendingException;
+import com.revature.exceptions.sql.NotNullConstraintException;
 import com.revature.exceptions.user.NoUserExistsException;
 import com.revature.models.Reimbursement;
-import com.revature.models.ReimbursementType;
+import com.revature.models.Role;
 import com.revature.models.Status;
 import com.revature.models.User;
 import com.revature.repositories.ReimbursementDAO;
@@ -39,8 +40,8 @@ import java.util.Optional;
  */
 public class ReimbursementService {
 
-    private static UserDAO uDao = UserDAO.getDao();
-    private static ReimbursementDAO rDao = ReimbursementDAO.getDao();
+    private static final UserDAO uDao = UserDAO.getDao();
+    private static final ReimbursementDAO rDao = ReimbursementDAO.getDao();
 
     private ReimbursementService(){}
 
@@ -76,6 +77,13 @@ public class ReimbursementService {
             throw new NoReimbursementExistsException();
     }
 
+    public static Optional<Reimbursement> getReimbursementById(User user, int reimbId) throws NotAuthorizedException {
+        if(user.getRole() != Role.FINANCE_MANAGER)
+            throw new NotAuthorizedException();
+
+        return rDao.getById(reimbId);
+    }
+
     /**
      * Should retrieve all reimbursements with the correct status.
      * Available only to Admins
@@ -88,31 +96,18 @@ public class ReimbursementService {
         return opReimbList.orElse(Collections.emptyList());
     }
 
-    /**
-     * Should be available to Finance_Managers only
-     */
-    public static List<Reimbursement> getAllReimbursements(int userId) throws NoUserExistsException, NotAuthorizedException {
+    public static List<Reimbursement> getAllReimbursements(User requester) throws NotAuthorizedException {
 
-        AuthService.getAdminUser(userId);
+        if(requester.getRole() != Role.FINANCE_MANAGER)
+            throw new NotAuthorizedException();
 
        Optional<List<Reimbursement>> opReimbList = rDao.getAll();
 
        return opReimbList.orElse(Collections.emptyList());
     }
 
-    public static Reimbursement submit(ReimbursementType type, String desc, double amount, int userId) throws ItemHasNonZeroIdException, CreationUnsuccessfulException, NoUserExistsException {
-         Optional<User> opUser = uDao.getById(userId);
-
-         if(opUser.isPresent()){
-             User user = opUser.get();
-
-             Reimbursement reimbursement = new Reimbursement(Status.PENDING, user, amount, desc, new Date(), type);
-
-                 return rDao.createRequest(reimbursement);
-         }
-         else {
-             throw new NoUserExistsException();
-         }
+    public static Reimbursement submit(Reimbursement reimbursementToSubmit) throws ItemHasNonZeroIdException, CreationUnsuccessfulException, NoUserExistsException {
+         return rDao.createRequest(reimbursementToSubmit);
     }
 
     /**
@@ -163,19 +158,23 @@ public class ReimbursementService {
 
     /**
      * Admins can edit any pending requests. Users can only edit their own pending requests.
-     * @param userId The user Id of the person editing.
+     * @param requester The user of the person editing.
      * @param newReimbursement The edited reimbursement request.
      * @return The edited request.
      */
-    public static Reimbursement editRequest(int userId, Reimbursement newReimbursement) throws ReimbursementNoLongerPendingException, NoUserExistsException, NotAuthorizedException, UpdateUnsuccessfulException {
+    public static Reimbursement editRequest(User requester, Reimbursement newReimbursement) throws ReimbursementNoLongerPendingException, NoUserExistsException, NotAuthorizedException, UpdateUnsuccessfulException, NotNullConstraintException {
         if(newReimbursement.getStatus() == Status.PENDING){
-            if(newReimbursement.getAuthor().getId() != userId){
-                AuthService.getAdminUser(userId);
-            }
-            return rDao.update(newReimbursement);
+
+            if(requester.getRole() == Role.FINANCE_MANAGER || newReimbursement.getAuthor().getId() == requester.getId())
+                return rDao.update(newReimbursement);
+            else
+                throw new NotAuthorizedException();
         }
-        else {
+        else
             throw new ReimbursementNoLongerPendingException();
-        }
+    }
+
+    public static boolean deleteAllForUser(int userId) throws DeleteUnsuccessfulException {
+        return rDao.deleteAllFromUser(userId);
     }
 }
