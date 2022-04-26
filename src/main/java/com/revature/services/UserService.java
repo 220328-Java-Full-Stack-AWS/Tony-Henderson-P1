@@ -1,12 +1,16 @@
 package com.revature.services;
 
-import com.revature.exceptions.reimbursement.auth.NotAuthorizedException;
+import com.revature.exceptions.auth.NotAuthorizedException;
 import com.revature.exceptions.crud.UpdateUnsuccessfulException;
+import com.revature.exceptions.sql.NotNullConstraintException;
 import com.revature.exceptions.user.NoUserExistsException;
 import com.revature.models.Role;
 import com.revature.models.User;
+import com.revature.repositories.ConnectionManager;
 import com.revature.repositories.UserDAO;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +31,7 @@ import java.util.Optional;
  */
 public class UserService {
 
-	private static UserDAO uDao = UserDAO.getDao();
+	private static final UserDAO uDao = UserDAO.getDao();
 
 	/**
 	 * Admins can request any user. Users can only get themselves.
@@ -52,7 +56,6 @@ public class UserService {
 	/**
 	 * Admins can request any user. Users can only get themselves.
 	 * @param requesteeUserId User Id of person taking the action
-	 * @param requestingUserId User Id to query
 	 */
 	public static Optional<User> getById(int requesteeUserId, int requestingUserId) throws NoUserExistsException, NotAuthorizedException {
 
@@ -127,5 +130,33 @@ public class UserService {
 		}
 		else
 			throw new NoUserExistsException();
+	}
+
+	public static User update(User userToUpdate) throws UpdateUnsuccessfulException, NotNullConstraintException {
+		String sql = "UPDATE users SET username = ?, first_name = ?, last_name = ?, email = ?, phone_number = ?, address = ? WHERE user_id = ?";
+
+		try {
+			PreparedStatement pstmt = ConnectionManager.getConnection().prepareStatement(sql);
+
+			pstmt.setString(1, userToUpdate.getUsername()); // username
+			pstmt.setString(2, userToUpdate.getFirstName()); // first_name
+			pstmt.setString(3, userToUpdate.getLastName()); // last_name
+			pstmt.setString(4, userToUpdate.getEmail()); // email
+			pstmt.setString(5, userToUpdate.getPhoneNumber()); // phone_number
+			pstmt.setString(6, userToUpdate.getAddress()); // address
+			pstmt.setInt(7, userToUpdate.getId()); // user_id
+
+			if(pstmt.executeUpdate() == 0)
+				throw new UpdateUnsuccessfulException();
+
+			return userToUpdate;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("SQLState: " + e.getSQLState());
+			if(e.getSQLState().equals("23502"))
+				throw new NotNullConstraintException();
+			throw new UpdateUnsuccessfulException();
+		}
 	}
 }
