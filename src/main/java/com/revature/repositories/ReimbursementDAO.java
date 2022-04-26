@@ -4,11 +4,13 @@ import com.revature.exceptions.crud.CreationUnsuccessfulException;
 import com.revature.exceptions.crud.DeleteUnsuccessfulException;
 import com.revature.exceptions.crud.ItemHasNonZeroIdException;
 import com.revature.exceptions.crud.UpdateUnsuccessfulException;
+import com.revature.exceptions.sql.NotNullConstraintException;
 import com.revature.models.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,8 +20,8 @@ import java.util.Optional;
 
 public class ReimbursementDAO implements IReimbursementDAO{
 
-    private static ReimbursementDAO dao = null;
-    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private static final ReimbursementDAO dao = null;
+    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
     private ReimbursementDAO(){}
 
@@ -102,7 +104,7 @@ public class ReimbursementDAO implements IReimbursementDAO{
 
     public Optional<List<Reimbursement>> getAllFromUser(int id){
 
-        String sql = "SELECT * FROM reimbursements_users_view WHERE author = ?";
+        String sql = "SELECT * FROM reimbursements_users_view WHERE author = ? ORDER BY reimbursement_id";
         List<Reimbursement> reimbList = new LinkedList<>();
 
         try {
@@ -112,6 +114,7 @@ public class ReimbursementDAO implements IReimbursementDAO{
             ResultSet resSet = pstmt.executeQuery();
 
             while(resSet.next()){
+                System.out.println(resSet);
                 reimbList.add(constructReimbursement(resSet));
             }
 
@@ -125,7 +128,7 @@ public class ReimbursementDAO implements IReimbursementDAO{
     }
 
     @Override
-    public Reimbursement update(Reimbursement unprocessedReimbursement) throws UpdateUnsuccessfulException {
+    public Reimbursement update(Reimbursement unprocessedReimbursement) throws UpdateUnsuccessfulException, NotNullConstraintException {
 
         if(unprocessedReimbursement.getId() == 0){
             throw new UpdateUnsuccessfulException("Cannot update item as it has an id of 0. Maybe you would like to create it first?");
@@ -149,17 +152,23 @@ public class ReimbursementDAO implements IReimbursementDAO{
                 pstmt.setString(6, formatter.format(unprocessedReimbursement.getResolutionDate()));
             }
             else {
-                pstmt.setString(3, null);
+                pstmt.setNull(3, Types.INTEGER);
                 pstmt.setString(6, null);
             }
 
             if(pstmt.executeUpdate() == 0){
                 throw new UpdateUnsuccessfulException("No rows were updated");
             }
+            Optional<Reimbursement> updatedReimbursement = getDao().getById(unprocessedReimbursement.getId());
 
-            return unprocessedReimbursement;
+            return updatedReimbursement.orElse(null);
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("SQL State: " + e.getSQLState());
+            // Non-Null Constraint
+            if(e.getSQLState().equals("23502")) {
+                throw new NotNullConstraintException();
+            }
         }
 
         return null;
@@ -169,29 +178,31 @@ public class ReimbursementDAO implements IReimbursementDAO{
     public Reimbursement createRequest(Reimbursement newReimbursement) throws CreationUnsuccessfulException, ItemHasNonZeroIdException {
 
         int reimbursementId = newReimbursement.getId();
-        String status = newReimbursement.toString();
+        newReimbursement.setStatus(Status.PENDING);
+        newReimbursement.setCreationDate(new Date());
 
         if(reimbursementId != 0){
             throw new ItemHasNonZeroIdException("Cannot create a reimbursement as it has an id that is not zero, therefore it might already exist. Maybe " +
                     "you would like to update this item.");
         }
 
-        String sql = "INSERT INTO reimbursements (status, author, reimbursement_type, resolver, amount, description, creation_date, resolution_date) VALUES (?, ?, ?, ?, ?::numeric::money, ?, CREATION_DATE, ?);";
+        String sql = "INSERT INTO reimbursements (status, author, reimbursement_type, resolver, amount, description, creation_date, resolution_date) VALUES (?, ?, ?, ?, ?::numeric::money, ?, ?, ?);";
 
         try {
             PreparedStatement pstmt = ConnectionManager.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 
-            pstmt.setString(1, status); // status
-            pstmt.setInt(2, newReimbursement.getAuthor().getId()); // author
+            pstmt.setString(1, newReimbursement.getStatus().toString()); // status
+            pstmt.setInt(2, newReimbursement.getAuthor() != null ? newReimbursement.getAuthor().getId() : null); // author
             pstmt.setString(3, newReimbursement.getType().toString()); // reimbursement_type
             pstmt.setDouble(5, newReimbursement.getAmount()); // amount
             pstmt.setString(6, newReimbursement.getDescription()); // description
+            pstmt.setString(7, newReimbursement.getCreationDate().toString()); // creation_date
 
-            if(status.equals("PENDING")){
-                pstmt.setString(7, null); // resolution_date
-                pstmt.setString(4, null); // resolver
+            if(newReimbursement.getStatus() == Status.PENDING){
+                pstmt.setString(8, null); // resolution_date
+                pstmt.setNull (4, Types.INTEGER); // resolver
             } else {
-                pstmt.setString(7, newReimbursement.getResolutionDate().toString()); // resolution_date
+                pstmt.setString(8, newReimbursement.getResolutionDate().toString()); // resolution_date
                 pstmt.setInt(4, newReimbursement.getResolver().getId()); // resolver
             }
 
@@ -238,6 +249,23 @@ public class ReimbursementDAO implements IReimbursementDAO{
         }
 
         return false;
+    }
+
+    public boolean deleteAllFromUser(int userId) throws DeleteUnsuccessfulException {
+        String sql = "DELETE FROM reimbursements WHERE author = ?";
+
+        try {
+            PreparedStatement pstmt = ConnectionManager.getConnection().prepareStatement(sql);
+            pstmt.setInt(1, userId);
+            if(pstmt.executeUpdate() == 0)
+                throw new DeleteUnsuccessfulException();
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("SQL State: " + e.getSQLState());
+            throw new DeleteUnsuccessfulException();
+        }
     }
 
     private Reimbursement constructReimbursement(ResultSet resultSet) throws SQLException {
