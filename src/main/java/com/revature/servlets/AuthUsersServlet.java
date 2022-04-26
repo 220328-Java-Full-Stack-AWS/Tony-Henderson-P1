@@ -3,6 +3,7 @@ package com.revature.servlets;
 import com.revature.exceptions.auth.LoginFailedException;
 import com.revature.models.User;
 import com.revature.services.AuthService;
+import com.revature.servlets.dto.RequesterDTO;
 import com.revature.servlets.responses.ErrorResponse;
 import com.revature.servlets.responses.SuccessResponse;
 import com.revature.utils.JsonWebToken;
@@ -27,7 +28,10 @@ public class AuthUsersServlet extends HttpServlet {
         try {
             // Authenticate user
             User user = AuthService.login(userToAuthenticate.getUsername(), userToAuthenticate.getPassword());
-            String jwt = JsonWebToken.sign(modelToJson(user));
+            String userJson = modelToJson(user);
+            RequesterDTO requesterDTO = jsonToModel(userJson, RequesterDTO.class);
+            System.out.println(requesterDTO);
+            String jwt = JsonWebToken.sign(modelToJson(requesterDTO));
 
             Cookie userCookie = new Cookie("Authorization", jwt);
             userCookie.setPath("/");
@@ -35,7 +39,7 @@ public class AuthUsersServlet extends HttpServlet {
 
             resp.setStatus(202);
             resp.setContentType("application/json");
-            resp.getWriter().print(modelToJson(new SuccessResponse(202, "Successful login", user)));
+            resp.getWriter().print(modelToJson(new SuccessResponse(202, "Successful login", requesterDTO)));
         } catch (LoginFailedException e) {
             resp.setStatus(401);
             resp.setContentType("application/json");
