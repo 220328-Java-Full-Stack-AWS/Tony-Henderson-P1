@@ -1,14 +1,16 @@
 package com.revature.repositories;
 
-import com.revature.exceptions.crud.CannotDeleteForeignKeyViolationException;
+import com.revature.exceptions.sql.CannotDeleteForeignKeyViolationException;
 import com.revature.exceptions.crud.DeleteUnsuccessfulException;
 import com.revature.exceptions.crud.ItemHasNonZeroIdException;
 import com.revature.exceptions.crud.UpdateUnsuccessfulException;
+import com.revature.exceptions.sql.NotNullConstraintException;
 import com.revature.exceptions.user.EmailNotUniqueException;
 import com.revature.exceptions.user.RegistrationUnsuccessfulException;
 import com.revature.exceptions.user.UsernameNotUniqueException;
 import com.revature.models.Role;
 import com.revature.models.User;
+import com.revature.utils.BCryptHash;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -123,7 +125,7 @@ public class UserDAO implements IUserDAO {
      *     <li>Should return a User object with an updated ID.</li>
      * </ul>
      */
-    public User create(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException, UsernameNotUniqueException, EmailNotUniqueException {
+    public User create(User userToBeRegistered) throws RegistrationUnsuccessfulException, ItemHasNonZeroIdException, UsernameNotUniqueException, EmailNotUniqueException, NotNullConstraintException {
 
         if(userToBeRegistered.getId() != 0){
             throw new ItemHasNonZeroIdException("User: '" + userToBeRegistered.getUsername() + "' already has an id. If" +
@@ -131,6 +133,7 @@ public class UserDAO implements IUserDAO {
         }
         try{
             String sql = "INSERT INTO users (username, password, role, first_name, last_name, email, phone_number, address) VALUES (?,?,?,?,?,?,?,?)";
+            userToBeRegistered.setPassword(BCryptHash.hash(userToBeRegistered.getPassword()));
 
             PreparedStatement pstmt = ConnectionManager.getConnection().prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             pstmt.setString(1, userToBeRegistered.getUsername());
@@ -152,6 +155,10 @@ public class UserDAO implements IUserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
 
+            System.out.println("Error SQLState: " + e.getSQLState());
+            // Not-Null constraint
+            if(e.getSQLState().equals("23502"))
+                throw new NotNullConstraintException();
             // Unique constraint was violated
             if(e.getSQLState().equals("23505")){
                 Optional<User> opUser = UserDAO.getDao().getByUsername(userToBeRegistered.getUsername());
