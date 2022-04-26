@@ -1,6 +1,6 @@
-package com.revature.errorresponses;
+package com.revature.servlets.responses;
 
-public class ErrorResponse {
+public class ErrorResponse{
 
     private int statusCode;
     private String message;
