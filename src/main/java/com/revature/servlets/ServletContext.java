@@ -1,10 +1,10 @@
 package com.revature.servlets;
 
 import com.revature.repositories.ConnectionManager;
+import com.revature.utils.JsonWebToken;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.*;
 
 @WebListener
 public class ServletContext implements ServletContextListener {
@@ -16,6 +16,7 @@ public class ServletContext implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         /* This method is called when the servlet context is initialized(when the Web application is deployed). */
         ConnectionManager.getConnection();
+        JsonWebToken.load();
     }
 
     @Override
