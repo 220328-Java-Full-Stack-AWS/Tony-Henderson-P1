@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  */
 @JsonIgnoreProperties
-public class Reimbursement extends AbstractReimbursement {
+public class Reimbursement extends AbstractReimbursement implements Comparable<Reimbursement> {
 
     private String description;
     private ReimbursementType type;
@@ -104,5 +104,10 @@ public class Reimbursement extends AbstractReimbursement {
                 ", creationDate=" + creationDate +
                 ", resolutionDate=" + resolutionDate +
                 "}\n";
+    }
+
+    @Override
+    public int compareTo(Reimbursement o) {
+        return this.getId() - o.getId();
     }
 }

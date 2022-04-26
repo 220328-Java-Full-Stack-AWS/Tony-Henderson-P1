@@ -17,7 +17,6 @@ import java.util.Objects;
  * </ul>
  *
  */
-@JsonIgnoreProperties
 public class User extends AbstractUser {
 
     private String firstName;
