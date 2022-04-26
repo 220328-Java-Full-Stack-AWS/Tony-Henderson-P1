@@ -1,4 +1,4 @@
-package com.revature.exceptions.crud;
+package com.revature.exceptions.sql;
 
 public class CannotDeleteForeignKeyViolationException extends Exception{
 
