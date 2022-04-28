@@ -148,8 +148,8 @@ public class ReimbursementsServlet extends HttpServlet {
                 if(requester.getRole() != Role.FINANCE_MANAGER)
                     throw new NotAuthorizedException();
 
-                Reimbursement reimbursementToDelete = bodyToModel(req, Reimbursement.class);
-                ReimbursementService.deleteRequest(requester.getId() ,reimbursementToDelete.getId());
+                int reimbursementId = Integer.parseInt(req.getHeader(Headers.REIMBURSEMENT_ID.toString()));
+                ReimbursementService.deleteRequest(requester.getId() ,reimbursementId);
 
                 respondWithSuccess(resp, 202, "Successfully deleted item", null);
             } catch (NotAuthorizedException | CantParseUserException | NoUserExistsException e) {
@@ -161,6 +161,9 @@ public class ReimbursementsServlet extends HttpServlet {
             } catch (DeleteUnsuccessfulException e) {
                 e.printStackTrace();
                 respondWithError(resp, 500, "Failed to delete Reimbursement");
+            } catch (NumberFormatException e){
+                e.printStackTrace();
+                respondWithError(resp, 400, "Make sure Reimbursement-Id is numeric");
             }
     }
 
