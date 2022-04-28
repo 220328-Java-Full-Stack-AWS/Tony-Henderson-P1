@@ -1,0 +1,19 @@
+body {
+    display: flex;
+    align-items: center;
+}
+
+.flexRow {
+    margin: 2px 0;
+    justify-content: space-between;
+}
+
+textarea {
+    height: 100px;
+}
+label {
+    margin-left: 30px;
+}
+.formField {
+    width: 200px;
+}

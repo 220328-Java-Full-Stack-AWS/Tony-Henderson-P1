@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="./admin-port.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal</title>
+    <script>var me;</script>
+    <script src="../../scripts/getSelf.js"></script>
+<body>
+    <div>
+        <nav>
+            <ul>
+                <a href="/pages/home/home.html"><li>Home</li></a>
+                <a id="signOut"><li>Sign Out</li></a>
+            </ul>
+        </nav>
+    </div>
+    
+    <div id="pageContainer">
+        <div id="containerAboveTable">
+            <div class="errorHolder"></div>
+        </div>
+        <div id="tableContainer">
+            <table id="reimbursementsTable">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+    <script src="./admin-port.js" type="module"></script>
+</body>
+</html>

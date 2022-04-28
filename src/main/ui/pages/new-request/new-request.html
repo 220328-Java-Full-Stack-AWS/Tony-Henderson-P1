@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="../../global.css">
+    <link rel="stylesheet" href="./new-request.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Request</title>
+    <script>var me;</script>
+    <script src="../../scripts/getSelf.js"></script>
+</head>
+<body>
+    <div>
+        <nav>
+            <ul>
+                <a id="signOut"><li>Sign Out</li></a>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="contentBox">
+        <form autocomplete="off">
+            <div class="header">
+                <span class="title">New</span>
+                <div class="errorHolder"></div>
+            </div>
+            <div class="flexRow">
+                <label for="type">Type</label>
+                <select class="formField" name="type" id="type" required>
+                    <option value="">--Select--</option>
+                    <option value="LODGING">Lodging</option>
+                    <option value="FOOD">Food</option>
+                    <option value="TRAVEL">Travel</option>
+                    <option value="SUPPLIES">Supplies</option>
+                </select>
+            </div>
+            <div class="flexRow">
+                <label for="amount">Amount</label>
+                <input class="formField" type="text" id="amount" name="amount" placeholder="Enter the amount" required>
+            </div>
+            <div class="flexRow">
+                <label for="description">Description</label>
+                <textarea class="formField" style="resize: none;" name="description" id="description" placeholder="Enter the description" required></textarea>
+            </div>
+            <div class="actions">
+                <button id="backButton" type="button" onclick="window.location = '/pages/home/home.html'">Back</button>
+                <button id="submitButton" type="button">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="./new-request.js" type="module"></script>
+</body>
+</html>

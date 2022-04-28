@@ -1,0 +1,21 @@
+body {
+    display: flex;
+}
+
+.flexColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 10px;
+
+}
+
+.fields {
+    display: flex;
+    flex-direction: column;
+}
+
+#loginButton {
+    margin: 5px;
+}
+

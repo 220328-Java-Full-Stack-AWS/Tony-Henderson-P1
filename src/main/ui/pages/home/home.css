@@ -1,0 +1,26 @@
+body {
+    display: flex;
+    justify-content: center;
+}
+#pageContainer {
+    margin: 15%;
+}
+table {
+    border-collapse: collapse;
+    border: 1px solid lightgray;
+    max-height: 70%;
+}
+tr {
+    padding: 10px 0;
+}
+td, th {
+    border: 1px solid lightgray;
+    padding: 2px 20px;
+    max-width: 450px;
+}
+button {
+    margin: 10px 0;
+}
+#containerAboveTable{
+    display: flex;
+}

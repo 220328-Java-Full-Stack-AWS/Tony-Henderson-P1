@@ -1,0 +1,7 @@
+body {
+    display: flex;
+}
+.flexRow {
+    margin: 2px 0;
+    justify-content: space-between;
+}
