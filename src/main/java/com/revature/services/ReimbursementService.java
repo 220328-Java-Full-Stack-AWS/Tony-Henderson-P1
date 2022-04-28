@@ -163,15 +163,10 @@ public class ReimbursementService {
      * @return The edited request.
      */
     public static Reimbursement editRequest(User requester, Reimbursement newReimbursement) throws ReimbursementNoLongerPendingException, NoUserExistsException, NotAuthorizedException, UpdateUnsuccessfulException, NotNullConstraintException {
-        if(newReimbursement.getStatus() == Status.PENDING){
-
             if(requester.getRole() == Role.FINANCE_MANAGER || newReimbursement.getAuthor().getId() == requester.getId())
                 return rDao.update(newReimbursement);
             else
                 throw new NotAuthorizedException();
-        }
-        else
-            throw new ReimbursementNoLongerPendingException();
     }
 
     public static boolean deleteAllForUser(int userId) throws DeleteUnsuccessfulException {
