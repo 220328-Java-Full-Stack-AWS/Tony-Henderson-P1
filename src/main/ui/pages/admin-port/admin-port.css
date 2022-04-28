@@ -39,3 +39,7 @@ thead {
     right: 0;
     top: 0;
 }
+
+button {
+    margin: 10px 0;
+}

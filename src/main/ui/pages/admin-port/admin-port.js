@@ -4,24 +4,39 @@ import reimbursementsFetch from '../../scripts/fetch/reimbursements.js';
 
 
 const tableBody = document.querySelector("#reimbursementsTable tbody");
+let reimbursements; // get data out
 const errorHolder = document.querySelector(".errorHolder");
 
 window.onload = function() {
     if(me.role != "FINANCE_MANAGER")
         window.location = "/pages/home/home.html";
-
-    setTimeout( () => {
-        populateTable();
-    }, 100);
-
+    init();
+    
     document.querySelector("#signOut").addEventListener("click", () => {
         signOut();
     });
 
+    document.querySelector("#filterPending").addEventListener("click", () => {
+        sortByPending();
+    });
+    document.querySelector("#filterApproved").addEventListener("click", () => {
+        sortByApproved();
+    });
+    document.querySelector("#filterDenied").addEventListener("click", () => {
+        sortByDenied();
+    });
+        
+}
+    
+async function init(){
+    reimbursements = await reimbursementsFetch.get();
+    setTimeout(() => {
+        populateTable(reimbursements);
+    }, 100);
 }
 
-async function populateTable(){
-    let reimbursements = await reimbursementsFetch.get();
+async function populateTable(reimbursements){
+    tableBody.innerHTML = "";
     for(let reimbursement of reimbursements.data){
         let tr = `<tr reimbId="${reimbursement.id}">
         <td>${reimbursement.status}</td>
@@ -33,7 +48,6 @@ async function populateTable(){
             tr += `<td><a href="#" class="approveLink" reimbId="${reimbursement.id}">Approve</a> <a href="#" class="denyLink" reimbId="${reimbursement.id}">Deny</a></td></tr>`;
         }
         else {
-
             tr += "</tr>";
         }
 
@@ -95,6 +109,40 @@ async function denyRequest(reimbId){
             errorMessage(err.message);
         });
 
+}
+
+function sortByPending(){
+    reimbursements.data.sort((a, b) => {
+        if(a.status == "PENDING" && b.status != "PENDING")
+            return -1;
+        else if (a.status == "PENDING" && b.status == "PENDING")
+            return 0;
+        else 
+            return 1;
+    });
+    populateTable(reimbursements);
+}
+function sortByDenied(){
+    reimbursements.data.sort((a, b) => {
+        if(a.status == "DENIED" && b.status != "DENIED")
+            return -1;
+        else if (a.status == "DENIED" && b.status == "DENIED")
+            return 0;
+        else 
+            return 1;
+    });
+    populateTable(reimbursements);
+}
+function sortByApproved(){
+    reimbursements.data.sort((a, b) => {
+        if(a.status == "APPROVED" && b.status != "APPROVED")
+            return -1;
+        else if (a.status == "APPROVED" && b.status == "APPROVED")
+            return 0;
+        else 
+            return 1;
+    });
+    populateTable(reimbursements);
 }
 
 function errorMessage(message){
