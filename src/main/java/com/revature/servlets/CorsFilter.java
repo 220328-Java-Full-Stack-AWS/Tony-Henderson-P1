@@ -45,6 +45,8 @@ public class CorsFilter implements Filter {
         ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Origin", "*");
         ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Methods","*");
         ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Headers","*");
+        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Expose-Headers","*");
+//        ((HttpServletResponse) servletResponse).addHeader("Access-Control-Allow-Credentials","true");
 
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
