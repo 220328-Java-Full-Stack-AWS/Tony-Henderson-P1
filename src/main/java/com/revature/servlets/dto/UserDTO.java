@@ -2,7 +2,7 @@ package com.revature.servlets.dto;
 
 import com.revature.models.Role;
 
-public class RequesterDTO {
+public class UserDTO {
     private int id;
     private String username;
     private String firstName;
