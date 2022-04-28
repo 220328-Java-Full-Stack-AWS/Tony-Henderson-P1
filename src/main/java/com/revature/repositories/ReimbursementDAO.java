@@ -196,7 +196,7 @@ public class ReimbursementDAO implements IReimbursementDAO{
             pstmt.setString(3, newReimbursement.getType().toString()); // reimbursement_type
             pstmt.setDouble(5, newReimbursement.getAmount()); // amount
             pstmt.setString(6, newReimbursement.getDescription()); // description
-            pstmt.setString(7, newReimbursement.getCreationDate().toString()); // creation_date
+            pstmt.setString(7, formatter.format(newReimbursement.getCreationDate())); // creation_date
 
             if(newReimbursement.getStatus() == Status.PENDING){
                 pstmt.setString(8, null); // resolution_date
@@ -223,7 +223,6 @@ public class ReimbursementDAO implements IReimbursementDAO{
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
 
         return null;
     }
