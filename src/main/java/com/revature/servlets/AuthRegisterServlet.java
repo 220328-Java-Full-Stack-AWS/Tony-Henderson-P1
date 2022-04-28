@@ -8,7 +8,8 @@ import com.revature.exceptions.user.UsernameNotUniqueException;
 import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.services.AuthService;
-import com.revature.services.UserService;
+import com.revature.servlets.dto.UserDTO;
+import com.revature.utils.JsonWebToken;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,8 +34,12 @@ public class AuthRegisterServlet extends HttpServlet {
 
         try {
             User registeredUser = AuthService.register(userToRegister);
+            String registeredJson = modelToJson(registeredUser);
+            UserDTO registeredUserDTO = jsonToModel(registeredJson, UserDTO.class);
+            String jwt = JsonWebToken.sign(modelToJson(registeredUserDTO));
 
-            respondWithSuccess(resp, 201, "User was successfully registered", registeredUser);
+            resp.setHeader("SetCookie", jwt);
+            respondWithSuccess(resp, 201, "User was successfully registered", registeredUserDTO);
             return;
         } catch (RegistrationUnsuccessfulException e) {
             e.printStackTrace();
