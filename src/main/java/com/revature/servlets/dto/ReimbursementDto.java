@@ -9,14 +9,14 @@ import java.util.Map;
 
 @JsonIgnoreProperties
 public class ReimbursementDto  extends Reimbursement {
+    private int id;
+    private User author;
+    private User resolver;
     private String description;
     private ReimbursementType type;
     private Date creationDate;
     private Date resolutionDate;
-    private int id;
     private Status status;
-    private User author;
-    private User resolver;
     private double amount;
 
     public ReimbursementDto() {
