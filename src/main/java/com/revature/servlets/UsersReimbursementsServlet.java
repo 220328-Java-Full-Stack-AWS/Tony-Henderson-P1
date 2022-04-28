@@ -127,6 +127,13 @@ public class UsersReimbursementsServlet extends HttpServlet {
 
     }
 
+    /**
+     * Creates a reimbursement on requester otherwise if User-Id header is given create a reimbursment for that user.
+     * <ul>
+     *     <li>Requires {@code Authorization} header</li>
+     *     <li>(optional) {@code User-Id} header</li>
+     * </ul>
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -159,6 +166,7 @@ public class UsersReimbursementsServlet extends HttpServlet {
                     respondWithSuccess(resp, 201, "Thanks for submitting your request", submittedReimbursement);
                     return;
                 }
+                reimbursement.setAuthor(opAuthor.get());
                 Reimbursement submittedReimbursement = ReimbursementService.submit(reimbursement);
 
                 respondWithSuccess(resp, 201, "Successfully created a reimbursement for this user", submittedReimbursement);
@@ -258,8 +266,12 @@ public class UsersReimbursementsServlet extends HttpServlet {
 
                     if(doDeleteAllForUser)
                         ReimbursementService.deleteAllForUser(requester.getId());
-                    else
+                    else {
+                        Optional<Reimbursement> opReimbursement = ReimbursementService.getReimbursementById(requester, targetReimbId);
+                        if(!opReimbursement.isPresent() || opReimbursement.get().getAuthor().getId() != requester.getId())
+                            throw new NoReimbursementExistsException();
                         ReimbursementService.deleteRequest(requester.getId(), targetReimbId);
+                    }
 
                 } else { // targetUserId
 
@@ -285,7 +297,7 @@ public class UsersReimbursementsServlet extends HttpServlet {
             respondWithError(resp, 403, "You are not authorized to make this request");
         } catch (DeleteUnsuccessfulException e) {
             e.printStackTrace();
-            respondWithError(resp, 400, "Failed. There was a problem deleting the reimbursement(s)");
+            respondWithError(resp, 400, "There was a problem deleting the reimbursement(s). It's possible there is none to delete.");
         } catch (NoReimbursementExistsException e) {
             e.printStackTrace();
             respondWithError(resp, 400, "No reimbursement exists with specified id for this user");
