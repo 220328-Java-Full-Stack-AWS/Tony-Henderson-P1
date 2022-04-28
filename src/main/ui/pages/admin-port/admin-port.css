@@ -30,6 +30,7 @@ td, th {
 #tableContainer {
     max-height: 800px;
     overflow: auto;
+    border: 1px solid lightgray;
 }
 thead {
     background-color: lightgray;
